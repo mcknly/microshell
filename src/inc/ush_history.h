@@ -22,46 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifndef USH_HISTORY_H
+#define USH_HISTORY_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "inc/ush_internal.h"
-#include "inc/ush_const.h"
-#include "inc/ush_history.h"
-#include "inc/ush.h"
 
-#include <string.h>
+/* Calculates character index in the history buffer */
+#define HLINE_IDX(line)      ((line) * self->desc->input_history->length)
 
-void ush_reset_start(struct ush_object *self)
-{
-        USH_ASSERT(self != NULL);
+void ush_history_reset(struct ush_object *self);
+int ush_history_read_char(struct ush_object *self, char *ch);
 
-        self->state = USH_STATE_RESET;
+void ush_history_load_line(struct ush_object *self, size_t hline_idx);
+void ush_history_save_line(struct ush_object *self, size_t hline_idx, bool new_history_line);
+
+#ifdef __cplusplus
 }
+#endif
 
-void ush_reset(struct ush_object *self)
-{
-        USH_ASSERT(self != NULL);
-        
-        self->current_node = self->root;
-        ush_history_reset(self);
-        ush_write_pointer(self, USH_NAME " " USH_VERSION "\r\n", USH_STATE_RESET_PROMPT);
-}
-
-bool ush_reset_service(struct ush_object *self)
-{
-        USH_ASSERT(self != NULL);
-
-        bool processed = true;
-
-        switch (self->state) {
-        case USH_STATE_RESET:
-                ush_write_pointer(self, "\r\n", USH_STATE_RESET_PROMPT);
-                break;
-        case USH_STATE_RESET_PROMPT:
-                ush_prompt_start(self, USH_STATE_READ_PREPARE);
-                break;
-        default:
-                processed = false;
-                break;
-        }
-
-        return processed;
-}
+#endif /* USH_HISTORY_H */

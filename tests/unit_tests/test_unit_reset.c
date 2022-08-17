@@ -35,6 +35,7 @@ int g_assert_call_count;
 
 struct ush_object ush;
 
+int ush_history_reset_call_count;
 int ush_write_pointer_call_count;
 int ush_prompt_start_call_count;
 
@@ -57,6 +58,13 @@ void setUp(void)
 void tearDown(void)
 {
 
+}
+
+void ush_history_reset(struct ush_object *self)
+{
+        TEST_ASSERT_EQUAL(&ush, self);
+
+        ush_history_reset_call_count++;
 }
 
 void ush_write_pointer(struct ush_object *self, char *text, ush_state_t state)
@@ -84,6 +92,7 @@ void test_ush_reset(void)
         ush_reset(&ush);
         TEST_ASSERT_EQUAL((struct ush_node_object*)1234, ush.current_node);
         TEST_ASSERT_EQUAL(USH_STATE_RESET, ush.state);
+        TEST_ASSERT_EQUAL(1, ush_history_reset_call_count);
         TEST_ASSERT_EQUAL(1, ush_write_pointer_call_count);
         TEST_ASSERT_EQUAL(0, ush_prompt_start_call_count);
 }

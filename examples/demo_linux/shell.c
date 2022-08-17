@@ -32,16 +32,25 @@ SOFTWARE.
 #include "commands.h"
 #include "fs/fs.h"
 
+#define SHELL_HISTORY_LINES     6       /* Must be at least >= 2 */
 #define SHELL_WORK_BUFFER_SIZE  256
 #define SHELL_HOSTNAME_SIZE     16
 
 static char g_hostname_data[SHELL_HOSTNAME_SIZE + 1];
+
+static char g_history_buf[SHELL_HISTORY_LINES * SHELL_WORK_BUFFER_SIZE];
+static ush_history g_history = {
+        .lines = SHELL_HISTORY_LINES,
+        .length = SHELL_WORK_BUFFER_SIZE,
+        .buffer = g_history_buf,
+};
 
 static char g_input_buffer[SHELL_WORK_BUFFER_SIZE];
 static char g_output_buffer[SHELL_WORK_BUFFER_SIZE];
 
 static const struct ush_descriptor g_ush_desc = {
         .io = &g_ush_io_interface,
+        .input_history = &g_history,
         .input_buffer = g_input_buffer,
         .input_buffer_size = sizeof(g_input_buffer),
         .output_buffer = g_output_buffer,

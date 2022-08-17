@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <string.h>
+
+#include "inc/ush_history.h"
 #include "inc/ush_internal.h"
 
 void ush_read_echo_service(struct ush_object *self, char ch)
@@ -45,7 +48,7 @@ void ush_read_echo_service(struct ush_object *self, char ch)
                 break;
         }
 
-        ush_state_t next = (ch == '\r' || ch == '\n') ? USH_STATE_PARSE_PREPARE : USH_STATE_READ_CHAR;
+        ush_state_t next = (ch == '\r' || ch == '\n') ? USH_STATE_PARSE_PREPARE : self->state;
         ush_write_pointer(self, self->desc->output_buffer, next);
 }
 
@@ -54,6 +57,13 @@ bool ush_read_char_by_escape_state(struct ush_object *self, char ch)
         bool echo = true;
 
         if (self->ansi_escape_state == 0) {
+                /* Save character to history buffer */
+                size_t in_pos = self->in_pos;
+                self->desc->input_history->buffer[HLINE_IDX(0) + in_pos++] = ch;
+                if (in_pos >= self->desc->input_history->length)
+                        in_pos = 0;
+                self->desc->input_history->buffer[HLINE_IDX(0) + in_pos] = '\0';
+
                 self->desc->input_buffer[self->in_pos++] = ch;
                 if (self->in_pos >= self->desc->input_buffer_size)
                         self->in_pos = 0;
@@ -68,9 +78,18 @@ bool ush_read_char_by_escape_state(struct ush_object *self, char ch)
                 echo = false;
         } else if (self->ansi_escape_state == 2) {
                 if (ch == '\x41') {
-                        /* up */
+                        /* up - process if upper limit not reached and there is a historic line to move to */
+                        if ((self->history_index < self->desc->input_history->lines - 1) &&
+                            (strlen(&self->desc->input_history->buffer[HLINE_IDX(self->history_index + 1)]))) {
+                                self->history_index++;
+                                ush_history_load_line(self, self->history_index);
+                        }
                 } else if (ch == '\x42') {
-                        /* down */
+                        /* down - process if lower limit is not reached */
+                         if (self->history_index > 0) {
+                                self->history_index--;
+                                ush_history_load_line(self, self->history_index);
+                         }
                 } else if (ch == '\x43') {
                         /* right */
                 } else if (ch == '\x44') {
@@ -86,6 +105,8 @@ bool ush_read_char_by_escape_state(struct ush_object *self, char ch)
 void ush_read_start(struct ush_object *self)
 {
         USH_ASSERT(self != NULL);
+
+        ush_history_save_line(self, 0, true);
 
         self->in_pos = 0;
         self->desc->input_buffer[self->in_pos] = '\0';

@@ -31,11 +31,17 @@ create_unit_test( test_unit_read
 
 create_unit_test( test_unit_read_utils
     ${CMAKE_CURRENT_SOURCE_DIR}/test_unit_read_utils.c
+    # TODO: Make separate test unit for ush_history.c.
+    #       Right now, calling history functions from here is better than nothing
+    ${USH_SRC_DIR}/src/ush_history.c
     ${USH_SRC_DIR}/src/ush_read_utils.c
 )
 
 create_unit_test( test_unit_read_char
     ${CMAKE_CURRENT_SOURCE_DIR}/test_unit_read_char.c
+    # TODO: Make separate test unit for ush_history.c.
+    #       Right now, calling history functions from here is better than nothing
+    ${USH_SRC_DIR}/src/ush_history.c
     ${USH_SRC_DIR}/src/ush_read_char.c
 )
 
