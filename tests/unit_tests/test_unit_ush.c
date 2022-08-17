@@ -228,7 +228,7 @@ void test_ush_init(void)
                 case USH_STATUS_OK:
                         TEST_ASSERT_EQUAL(&ush_desc, ush.desc);
                         TEST_ASSERT_NULL(ush.root);
-                        TEST_ASSERT_EQUAL(7, g_assert_call_count);
+                        TEST_ASSERT_EQUAL(8, g_assert_call_count);
                         TEST_ASSERT_EQUAL(1, ush_commands_add_call_count);
                         TEST_ASSERT_EQUAL(1, ush_reset_call_count);
                         TEST_ASSERT_EQUAL(0, ush_write_pointer_call_count);
@@ -245,7 +245,7 @@ void test_ush_init(void)
                 default:
                         TEST_ASSERT_EQUAL(&ush_desc, ush.desc);
                         TEST_ASSERT_NULL(ush.root);
-                        TEST_ASSERT_EQUAL(8, g_assert_call_count);
+                        TEST_ASSERT_EQUAL(9, g_assert_call_count);
                         TEST_ASSERT_EQUAL(1, ush_commands_add_call_count);
                         TEST_ASSERT_EQUAL(1, ush_reset_call_count);
                         TEST_ASSERT_EQUAL(0, ush_write_pointer_call_count);

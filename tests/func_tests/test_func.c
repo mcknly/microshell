@@ -26,6 +26,8 @@ SOFTWARE.
 
 #include "test_func.h"
 
+#define SHELL_HISTORY_LINES     6       /* Must be at least >= 2 */
+
 char g_read_buf[TEST_FUNC_IO_BUFFER_SIZE];
 char g_write_buf[TEST_FUNC_IO_BUFFER_SIZE];
 
@@ -62,6 +64,14 @@ static const struct ush_io_interface g_ush_io_interface = {
 };
 
 struct ush_object g_ush;
+
+static char g_history_buffer[SHELL_HISTORY_LINES * TEST_FUNC_WORK_BUFFER_SIZE];
+static ush_history g_history = {
+        .lines = SHELL_HISTORY_LINES,
+        .length = TEST_FUNC_WORK_BUFFER_SIZE,
+        .buffer = g_history_buffer,
+};
+
 static char g_input_buffer[TEST_FUNC_WORK_BUFFER_SIZE];
 static char g_output_buffer[TEST_FUNC_WORK_BUFFER_SIZE];
 
@@ -71,6 +81,7 @@ static char g_hostname_data[16] = {
 
 static const struct ush_descriptor g_ush_desc = {
         .io = &g_ush_io_interface,
+        .input_history = &g_history,
         .input_buffer = g_input_buffer,
         .input_buffer_size = sizeof(g_input_buffer),
         .output_buffer = g_output_buffer,
