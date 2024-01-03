@@ -49,6 +49,10 @@ extern "C" {
 #define USH_SHELL_FONT_COLOR_CYAN              "\x1B[36m"
 #define USH_SHELL_FONT_COLOR_WHITE             "\x1B[37m"
 
+#define USH_SHELL_CLEAR_SCREEN                 "\x1B[2J"
+#define USH_SHELL_CLEAR_LINE                   "\x1B[2K"
+#define USH_SHELL_HOME                         "\x1B[H"
+
 #else
 
 #define USH_SHELL_FONT_STYLE_RESET
@@ -64,6 +68,10 @@ extern "C" {
 #define USH_SHELL_FONT_COLOR_MAGENTA
 #define USH_SHELL_FONT_COLOR_CYAN
 #define USH_SHELL_FONT_COLOR_WHITE
+
+#define USH_SHELL_CLEAR_SCREEN
+#define USH_SHELL_CLEAR_LINE
+#define USH_SHELL_HOME
 
 #endif /* USH_CONFIG_ENABLE_FEATURE_SHELL_STYLES */
 
