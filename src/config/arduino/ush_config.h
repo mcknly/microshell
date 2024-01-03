@@ -43,6 +43,7 @@ extern "C" {
 #define USH_CONFIG_ENABLE_FEATURE_COMMANDS                      1
 #define USH_CONFIG_ENABLE_FEATURE_AUTOCOMPLETE                  1
 #define USH_CONFIG_ENABLE_FEATURE_SHELL_STYLES                  1
+#define USH_CONFIG_ENABLE_FEATURE_VERSION_PRINT                 1
 
 #define USH_CONFIG_TRANSLATION_OK                               "ok"
 #define USH_CONFIG_TRANSLATION_ERROR                            "error"
