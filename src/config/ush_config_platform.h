@@ -31,6 +31,8 @@ extern "C" {
 
 #if defined(ARDUINO)
         #include "config/arduino/ush_config.h"
+#elif defined(PICO)
+        #include "config/pico/ush_config.h"
 #elif defined(USH_CONFIG_PLATFORM_POSIX)
         #include "config/posix/ush_config.h"
 #else
