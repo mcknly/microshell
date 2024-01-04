@@ -233,6 +233,18 @@ struct ush_io_interface {
 };
 
 /**
+ * @brief Prompt format structure.
+ * 
+ * This structure contains the custom prompt formatting.
+ * It should be placed in ROM, in case if runtime modification is not necessary.
+ */
+struct ush_prompt_format {
+        char *prompt_prefix;
+        char *prompt_space;
+        char *prompt_suffix;
+};
+
+/**
  * @brief Shell main descriptor structure.
  * 
  * This structure contains shell-related information.
@@ -246,6 +258,7 @@ struct ush_descriptor {
         size_t output_buffer_size;                      /**< Output working buffer size */
         size_t path_max_length;                         /**< Path maximum length (stack allocated) */
         char *hostname;                                 /**< Pointer to host name (used in prompt) */
+        struct ush_prompt_format const *prompt_format;  /**< Pointer to custom prompt formatting */
 
         ush_file_execute_callback exec;                 /**< General command execute callback (optional) */
 };

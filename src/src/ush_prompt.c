@@ -43,13 +43,13 @@ bool ush_prompt_service(struct ush_object *self)
 
         switch (self->state) {
         case USH_STATE_PROMPT_PREFIX:
-                ush_write_pointer(self, USH_SHELL_FONT_COLOR_MAGENTA "[", USH_STATE_PROMPT_HOST);
+                ush_write_pointer(self, self->desc->prompt_format->prompt_prefix, USH_STATE_PROMPT_HOST);
                 break;
         case USH_STATE_PROMPT_HOST:
                 ush_write_pointer(self, self->desc->hostname, USH_STATE_PROMPT_SPACE);
                 break;
         case USH_STATE_PROMPT_SPACE:
-                ush_write_pointer(self, " ", USH_STATE_PROMPT_PATH);
+                ush_write_pointer(self, self->desc->prompt_format->prompt_space, USH_STATE_PROMPT_PATH);
                 break;
         case USH_STATE_PROMPT_PATH: {
                 char *path = ush_utils_path_last(self->current_node->path);
@@ -57,7 +57,7 @@ bool ush_prompt_service(struct ush_object *self)
                 break;
         }
         case USH_STATE_PROMPT_SUFFIX:
-                ush_write_pointer(self, "]$ " USH_SHELL_FONT_STYLE_RESET, self->prompt_next_state);
+                ush_write_pointer(self, self->desc->prompt_format->prompt_suffix, self->prompt_next_state);
                 break;
         default:
                 processed = false;
