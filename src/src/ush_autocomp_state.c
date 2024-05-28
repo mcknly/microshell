@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "inc/ush_history.h"
 #include "inc/ush_internal.h"
 #include "inc/ush_preconfig.h"
 #include "inc/ush_utils.h"
@@ -36,6 +37,8 @@ void ush_autocomp_state_recall_suffix(struct ush_object *self)
         char *suffix = self->autocomp_input + strlen(self->autocomp_input) - self->autocomp_suffix_len;
         if (strlen(suffix) > 0) {
                 ush_write_pointer(self, suffix, USH_STATE_READ_CHAR);
+                /* Copy autocomp suffix to current line history */
+                strcat(&self->desc->input_history->buffer[HLINE_IDX(0)], suffix);
         } else {
                 ush_autocomp_prepare_candidates(self);
                 ush_write_pointer(self, "\r\n", USH_STATE_AUTOCOMP_CANDIDATES_PRINT);
@@ -89,6 +92,8 @@ void ush_autocomp_state_candidates_finish(struct ush_object *self)
                         strcpy(self->autocomp_input, self->autocomp_candidate_name);
                         self->in_pos = strlen(self->desc->input_buffer);
                         ush_write_pointer(self, suffix, USH_STATE_READ_CHAR);
+                        /* Copy autocomp suffix to current line history */
+                        strcat(&self->desc->input_history->buffer[HLINE_IDX(0)], suffix);
                         break;
                 }
                 default:

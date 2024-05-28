@@ -13,6 +13,9 @@ bool ush_read_service(struct ush_object *self, bool *read)
         case USH_STATE_READ_CHAR:
                 *read = ush_read_char(self);
                 break;
+        case USH_STATE_READ_CHAR_BUFFER:
+                *read = ush_read_char_buffer(self);
+                break;
         default:
                 processed = false;
                 break;

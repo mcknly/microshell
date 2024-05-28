@@ -24,16 +24,11 @@ SOFTWARE.
 
 #include "inc/ush_internal.h"
 #include "inc/ush_preconfig.h"
+#include "inc/ush_history.h"
 
-bool ush_read_char(struct ush_object *self)
+static void ush_read_process(struct ush_object *self, char ch)
 {
-        USH_ASSERT(self != NULL);
-
-        char ch;
         bool echo = true;
-
-        if (self->desc->io->read(self, &ch) == 0)
-                return false;
         
         switch (ch) {
         case '\x03':
@@ -53,7 +48,7 @@ bool ush_read_char(struct ush_object *self)
                 break;
         case '\x09':
                 /* tab */
-#if USH_CONFIG_ENABLE_FEATURE_AUTOCOMPLETE == 1      
+#if USH_CONFIG_ENABLE_FEATURE_AUTOCOMPLETE == 1
                 ush_autocomp_start(self);
 #endif /* USH_CONFIG_ENABLE_FEATURE_AUTOCOMPLETE */
                 echo = false;
@@ -70,6 +65,32 @@ bool ush_read_char(struct ush_object *self)
 
         if (echo != false)
                 ush_read_echo_service(self, ch);
+}
+
+bool ush_read_char(struct ush_object *self)
+{
+        USH_ASSERT(self != NULL);
+
+        char ch;
+        if (self->desc->io->read(self, &ch) == 0)
+                return false;
+
+        ush_read_process(self, ch);
+
+        return true;
+}
+
+bool ush_read_char_buffer(struct ush_object *self)
+{
+        USH_ASSERT(self != NULL);
         
+        char ch;
+        if (ush_history_read_char(self, &ch) == 0) {
+                self->state = USH_STATE_READ_CHAR;
+                return false;
+        }
+
+        ush_read_process(self, ch);
+
         return true;
 }
