@@ -77,14 +77,14 @@ bool ush_read_char_by_escape_state(struct ush_object *self, char ch)
                 }
                 echo = false;
         } else if (self->ansi_escape_state == 2) {
-                if (ch == '\x41') {
+                if (ch == '\x41' || ch == '\x01') { /* up arrow or ctrl+a */
                         /* up - process if upper limit not reached and there is a historic line to move to */
                         if ((self->history_index < self->desc->input_history->lines - 1) &&
                             (strlen(&self->desc->input_history->buffer[HLINE_IDX(self->history_index + 1)]))) {
                                 self->history_index++;
                                 ush_history_load_line(self, self->history_index);
                         }
-                } else if (ch == '\x42') {
+                } else if (ch == '\x42' || ch == '\x1A') { /* down arrow or ctrl+z */
                         /* down - process if lower limit is not reached */
                          if (self->history_index > 0) {
                                 self->history_index--;

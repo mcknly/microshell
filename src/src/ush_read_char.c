@@ -58,6 +58,12 @@ static void ush_read_process(struct ush_object *self, char ch)
                 self->ansi_escape_state = 1;
                 echo = false;
                 break;
+        case '\x01':
+        case '\x1A':
+                /* ctrl+a or ctrl+z */
+                self->ansi_escape_state = 2;
+                echo = ush_read_char_by_escape_state(self, ch);
+                break;
         default:
                 echo = ush_read_char_by_escape_state(self, ch);
                 break;
