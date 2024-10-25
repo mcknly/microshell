@@ -29,10 +29,20 @@ SOFTWARE.
 
 #include "inc/ush_internal.h"
 
+#define SHELL_HISTORY_LINES     6       /* Must be at least >= 2 */
+#define SHELL_WORK_BUFFER_SIZE  128
+
 int g_assert_call_count;
 
-char input_buffer[128];
-char output_buffer[128];
+static char g_history_buffer[SHELL_HISTORY_LINES * SHELL_WORK_BUFFER_SIZE];
+static ush_history g_history = {
+        .lines = SHELL_HISTORY_LINES,
+        .length = SHELL_WORK_BUFFER_SIZE,
+        .buffer = g_history_buffer,
+};
+
+char input_buffer[SHELL_WORK_BUFFER_SIZE];
+char output_buffer[SHELL_WORK_BUFFER_SIZE];
 
 struct ush_descriptor ush_desc;
 struct ush_object ush;
@@ -42,6 +52,7 @@ char ush_read_echo_service_char;
 
 void setUp(void)
 {
+        ush_desc.input_history = &g_history;
         ush_desc.input_buffer = input_buffer;
         ush_desc.input_buffer_size = sizeof(input_buffer);
         ush_desc.output_buffer = output_buffer;
@@ -85,6 +96,9 @@ void test_ush_read_echo_service(void)
 {
         for (int i = 0; i < 256; i++) {
                 setUp();
+
+                /* TODO: Add unit test for state USH_STATE_READ_CHAR_BUFFER */
+                ush.state = USH_STATE_READ_CHAR;
 
                 char ch = (char)i;
                 ush_read_echo_service_char = ch;

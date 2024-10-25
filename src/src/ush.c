@@ -35,6 +35,8 @@ void ush_init(struct ush_object *self, const struct ush_descriptor *desc)
         USH_ASSERT(self != NULL);
         USH_ASSERT(desc != NULL);
 
+        USH_ASSERT(desc->input_history != NULL);
+
         USH_ASSERT(desc->input_buffer != NULL);
         USH_ASSERT(desc->input_buffer_size > 0);
         USH_ASSERT(desc->output_buffer != NULL);

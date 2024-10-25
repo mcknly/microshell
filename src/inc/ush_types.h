@@ -72,6 +72,7 @@ typedef enum {
 
         USH_STATE_READ_PREPARE,                         /**< Prepare to read char state */
         USH_STATE_READ_CHAR,                            /**< Read char from input interface state */
+        USH_STATE_READ_CHAR_BUFFER,                     /**< Read char from history buffer */
 
         USH_STATE_PARSE_PREPARE,                        /**< Prepare to parse command state */
         USH_STATE_PARSE_SEARCH_ARG,                     /**< Search for command arguments state */
@@ -245,6 +246,18 @@ struct ush_prompt_format {
 };
 
 /**
+ * @brief History line information structure.
+ *
+ * This structure contains history line information.
+ * It should be placed in ROM, in case if runtime modification is not necessary.
+ */
+typedef struct ush_history {
+        size_t lines;                           /**< Number of lines in the history buffer */
+        size_t length;                          /**< Length of each line in the history buffer */
+        char *buffer;                           /**< Pointer to the whole history buffer */
+} ush_history;
+
+/**
  * @brief Shell main descriptor structure.
  * 
  * This structure contains shell-related information.
@@ -252,6 +265,7 @@ struct ush_prompt_format {
  */
 struct ush_descriptor {
         struct ush_io_interface const *io;              /**< Pointer to IO interface structure */
+        ush_history *input_history;                     /**< Pointer to history typedef struct (used to recall cmd history) */
         char *input_buffer;                             /**< Pointer to input working buffer (used to prepare and parsing data) */
         size_t input_buffer_size;                       /**< Input working buffer size */
         char *output_buffer;                            /**< Pointer to output working buffer (used to prepare and printing data) */
@@ -276,6 +290,11 @@ struct ush_object {
         ush_state_t state;                              /**< Current FSM internal state */
         ush_state_t write_next_state;                   /**< FSM internal state set after write */
         ush_state_t prompt_next_state;                  /**< FSM internal state set after prompt */
+
+        char *history_buf;                              /**< Pointer to history data to write to output interface */
+        size_t history_backspace;                       /**< Current number of backspace characters to erase line */
+        size_t history_index;                           /**< Current history buffer line index */
+        size_t history_pos;                             /**< Current history data position during write to output interface */
 
         char *write_buf;                                /**< Pointer to data to write to output interface */
         size_t write_size;                              /**< Number of chars to write to output interface */

@@ -35,7 +35,9 @@ struct ush_object ush;
 
 int ush_read_start_call_count;
 int ush_read_char_call_count;
+int ush_read_char_buffer_call_count;
 bool ush_read_char_return_val;
+bool ush_read_char_buffer_return_val;
 
 void setUp(void)
 {
@@ -57,6 +59,15 @@ void ush_read_start(struct ush_object *self)
         TEST_ASSERT_EQUAL(&ush, self);
 
         ush_read_start_call_count++;
+}
+
+bool ush_read_char_buffer(struct ush_object *self)
+{
+        TEST_ASSERT_EQUAL(&ush, self);
+
+        ush_read_char_buffer_call_count++;
+
+        return ush_read_char_buffer_return_val;
 }
 
 bool ush_read_char(struct ush_object *self)
@@ -86,6 +97,11 @@ void test_ush_read_service_state(void)
                         TEST_ASSERT_TRUE(ush_read_service(&ush, &read));
                         TEST_ASSERT_EQUAL(0, ush_read_start_call_count);
                         TEST_ASSERT_EQUAL(1, ush_read_char_call_count);
+                        break;
+                case USH_STATE_READ_CHAR_BUFFER:
+                        TEST_ASSERT_TRUE(ush_read_service(&ush, &read));
+                        TEST_ASSERT_EQUAL(0, ush_read_start_call_count);
+                        TEST_ASSERT_EQUAL(1, ush_read_char_buffer_call_count);
                         break;
                 default:
                         TEST_ASSERT_FALSE(ush_read_service(&ush, &read));
